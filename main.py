@@ -4,6 +4,9 @@ import xml.etree.ElementTree as ET
 tree = ET.parse('datos.xml')
 root = tree.getroot()
 
+
+#HOLAAAAAA
+
 # Recorriendo el árbol XML
 for elemento in root.findall('elemento'):
     nombre = elemento.get('nombre')
