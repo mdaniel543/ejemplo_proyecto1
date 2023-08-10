@@ -1,0 +1,12 @@
+<elementos>
+    <elemento nombre="uno" id="5">
+        <item value="1">prueba nueva</item>
+        <item value="2">B</item>
+        <item value="3">C</item>
+    </elemento>
+    <elemento nombre="dos" id="6">
+        <item value="4">D</item>
+        <item value="5">E</item>
+        <item value="6">F</item>
+    </elemento>
+</elementos>
