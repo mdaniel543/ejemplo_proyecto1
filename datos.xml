@@ -1,12 +1,18 @@
 <elementos>
-    <elemento nombre="uno" id="5">
-        <item value="1">prueba nueva</item>
-        <item value="2">B</item>
-        <item value="3">C</item>
+    <elemento nombre="test1" id="1">
+        <item row="1" col="1">A</item>
+        <item row="1" col="2">B</item>
+        <item row="1" col="3">C</item>
+        <item row="2" col="1">D</item>
+        <item row="2" col="2">E</item>
+        <item row="2" col="3">F</item>
     </elemento>
-    <elemento nombre="dos" id="6">
-        <item value="4">D</item>
-        <item value="5">E</item>
-        <item value="6">F</item>
+    <elemento nombre="test2" id="2">
+        <item row="1" col="1">Z</item>
+        <item row="1" col="2">Y</item>
+        <item row="2" col="1">X</item>
+        <item row="2" col="2">W</item>
+        <item row="3" col="1">V</item>
+        <item row="3" col="2">U</item>
     </elemento>
 </elementos>
