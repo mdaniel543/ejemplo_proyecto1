@@ -6,6 +6,7 @@ class Item(Nodo):
         self.row = row
         self.col = col
         self.text = text
+        
     
     def imprimir(self):
         print(f'     Row: {self.row}, Col: {self.col}, Text: {self.text}')
