@@ -12,7 +12,7 @@ class Elemento(Nodo):
         
     def imprimir(self):
         print(f'Elemento --- Nombre: {self.nombre}, ID: {self.id}')
-        self.showItemsConsole()
+        #self.showItemsConsole()
         
         
     def to_dot(self):
@@ -62,6 +62,16 @@ class Elemento(Nodo):
                 else:
                     print("-", end="\t")
             print()
+            
+            
+    def to_xml(self): 
+        cadena = f'<elemento nombre="{self.nombre}" id="{self.id}" cols="{self.cols}" rows="{self.rows}">\n'
+        actual = self.items.inicio
+        while actual:
+            cadena += f'\t<item row="{actual.row}" col="{actual.col}">{actual.text}</item>\n'
+            actual = actual.siguiente
+        cadena += "</elemento>\n"
+        return cadena
     
     
     def get_item(self, row, col):
