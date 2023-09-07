@@ -9,10 +9,11 @@ class ListaDoble():
 
     def mostrar(self):
         actual = self.inicio
+        aux = ''
         while actual != None:
-            actual.imprimir()
+            aux += actual.imprimir()
             actual = actual.siguiente
-        print("--------------")
+        return aux
 
     def mostrar_inverso(self):
         actual = self.fin

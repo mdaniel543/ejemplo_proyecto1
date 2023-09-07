@@ -5,19 +5,12 @@ from ListaDoble import ListaDoble
 from Elemento import Elemento
 from Item import Item
 
+import tkinter as tk
+from tkinter import messagebox, filedialog, PhotoImage
+
 elementos = ListaDoble()
 
-def carga_datos():
-    #solicitar la ruta del archivo
-    ruta = input("Ingrese la ruta del archivo: ")
-    #validar que el archivo exista
-    if not os.path.isfile(ruta):
-        print("El archivo no existe")
-        return
-    #validar que el archivo sea .xml
-    if not ruta.endswith(".xml"):
-        print("El archivo debe ser .xml")
-        return
+def carga_datos(ruta):
     elementos.inicializar()
     #cargar el archivo
     tree = ET.parse(ruta)
@@ -50,61 +43,118 @@ def graficar(elemento):
     os.system("dot -Tpng matriz.dot -o matriz.png")
     print("¡Gráfica generada en matriz.png!")
     
+    
+
        
-def menu():
-    while True: 
-        print("MENU PRINCIPAL")
-        print("1. Cargar datos")
-        print("2. Mostrar elementos")
-        print ("3. Mostar elementos al reves")
-        print("4. Buscar elemento por ID y generar imagen")
-        print ("5. Buscar elemento y eliminarlo")
-        print ("6. Buscar elemento y cambiar su nombre")
-        print ("7. Generar nuevo archivo XML")
-        print("8. Salir")
-        opcion = input("Ingrese una opción: ")
-        if opcion == "1":
-            carga_datos()
-        elif opcion == "2":
-            elementos.mostrar()
-        elif opcion == "3":
-            elementos.mostrar_inverso()
-        elif opcion == "4":
-            elementos.mostrar()
-            id_val = input("Ingrese el ID del elemento: ")
-            elemento = elementos.buscar_por_id(id_val)
+class App:
+    def __init__(self, master):
+        self.master = master
+        self.master.title('Menú Principal')
+
+        # Definiendo el tamaño de la ventana y centrándola en la pantalla
+        window_width = 1280
+        window_height = 720
+        screen_width = master.winfo_screenwidth()
+        screen_height = master.winfo_screenheight()
+        x_coordinate = (screen_width/2) - (window_width/2)
+        y_coordinate = (screen_height/2) - (window_height/2)
+        self.master.geometry(f'{window_width}x{window_height}+{int(x_coordinate)}+{int(y_coordinate)}')
+
+        self.master.configure(bg='black')
+
+        style_settings = {
+            "bg": "lightgray",
+            "fg": "black",
+            "padx": 10,
+            "pady": 5,
+            "font": ("Helvetica", 10)
+        }
+
+        # Botones y widgets
+        self.load_btn = tk.Button(master, text='Cargar datos', command=self.carga_datos_gui, **style_settings)
+        self.load_btn.pack(pady=5)  # El padding 'pady' añade espacio entre los botones
+
+        self.graph_btn = tk.Button(master, text='Buscar y generar imagen', command=self.search_and_graph, **style_settings)
+        self.graph_btn.pack(pady=5)
+
+        self.delete_btn = tk.Button(master, text='Eliminar elemento', command=lambda: self.eliminar(self.prompt_choice("Escoge un ID")), **style_settings)
+        self.delete_btn.pack(pady=5)
+        
+        self.update_btn = tk.Button(master, text='Actualizar elemento', command=lambda: self.actualizar(self.prompt_choice("Escoge un ID"), self.prompt_choice("Escribe el nuevo nombre")), **style_settings)
+        self.update_btn.pack(pady=5)
+        
+        # Inicializando el label
+        self.elements_label = tk.Label(master, text="", **style_settings)
+        self.elements_label.pack(pady=5)
+        
+        #imagen
+        self.canvas = tk.Canvas(master, width=920, height=540, bg='black', scrollregion=(0,0,1000,1000))
+        self.canvas.pack(side=tk.LEFT, pady=5)
+        
+        self.scroll_y = tk.Scrollbar(master, orient="vertical", command=self.canvas.yview)
+        self.scroll_y.pack(side=tk.LEFT, fill="y")
+        self.canvas.configure(yscrollcommand=self.scroll_y.set)
+        
+        self.image_label = tk.Label(self.canvas, bg='black')
+        self.canvas.create_window((0,0), window=self.image_label, anchor="nw")
+        
+        self.image_label.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+    
+    def carga_datos_gui(self):
+        filepath = filedialog.askopenfilename(filetypes=[("XML files", "*.xml")])
+        if filepath:
+            carga_datos(filepath)
+            messagebox.showinfo("Carga exitosa", "Los datos se han cargado exitosamente")
+            self.show_elements()
+
+    def show_elements(self):
+        print(elementos.mostrar())
+        self.elements_label.config(text=str(elementos.mostrar()))
+
+    def search_and_graph(self):
+        chosen_id = self.prompt_choice("Escoge un ID",)
+        if chosen_id:
+            elemento = elementos.buscar_por_id(chosen_id)
             if elemento:
                 graficar(elemento)
+                messagebox.showinfo("Gráfica generada", "La gráfica se ha generado exitosamente")
+                # Cargando y mostrando la imagen
+                img = PhotoImage(file='matriz.png')
+                self.image_label.config(image=img)
+                self.image_label.image = img  
             else:
-                print(f"El elemento con ID {id_val} no existe")
-        elif opcion == "5":
-            elementos.mostrar()
-            id_val = input("Ingrese el ID del elemento: ")
-            if elementos.eliminar(id_val):
-                print(f"El elemento con ID {id_val} ha sido eliminado")
-            else:
-                print(f"El elemento con ID {id_val} no existe")
-        elif opcion == "6":
-            elementos.mostrar()
-            id_val = input("Ingrese el ID del elemento: ")
-            nuevo_nombre = input("Ingrese el nuevo nombre: ")
-            if elementos.actualizar(id_val, nuevo_nombre):
-                print(f"El elemento con ID {id_val} ha sido actualizado")
-            else:
-                print(f"El elemento con ID {id_val} no existe")
+                messagebox.showerror("Error", f"El elemento con ID {chosen_id} no existe")
                 
-        elif opcion == "7":
-            elementos.escribirXML()
-            
-        elif opcion == "8":
-            break
-        else:
-            print("Opción inválida")
-        input("Presione ENTER para continuar...")
-        os.system('cls')
 
+    def prompt_choice(self, msg):
+        # Una función para solicitar una elección al usuario
+        choice = tk.simpledialog.askstring("Input", msg, parent=self.master)
+        return choice
     
+    def eliminar(self, id_val):
+        if elementos.eliminar(id_val):
+            messagebox.showinfo("Eliminado", f"El elemento con ID {id_val} ha sido eliminado")
+            #limpiar la imagen y generar de nuevo el label1
+            self.image_label.config(image=None)
+            self.image_label.image = None
+            self.show_elements()
+        else:
+            messagebox.showerror("Error", f"El elemento con ID {id_val} no existe")
+
+    def actualizar(self, id_val, nuevo_nombre):
+        if elementos.actualizar(id_val, nuevo_nombre):
+            messagebox.showinfo("Actualizado", f"El elemento con ID {id_val} ha sido actualizado")
+            self.show_elements()
+            self.image_label.config(image=None)
+            self.image_label.image = None
+        else:
+            messagebox.showerror("Error", f"El elemento con ID {id_val} no existe")
+
+def main():
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()
+
 if __name__ == '__main__':
-    menu()
-        
+    main()
 

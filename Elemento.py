@@ -11,8 +11,7 @@ class Elemento(Nodo):
         self.items = ListaSimple()
         
     def imprimir(self):
-        print(f'Elemento --- Nombre: {self.nombre}, ID: {self.id}')
-        #self.showItemsConsole()
+        return f'Elemento --- Nombre: {self.nombre}, ID: {self.id}\n'
         
         
     def to_dot(self):
