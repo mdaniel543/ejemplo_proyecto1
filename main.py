@@ -38,11 +38,10 @@ def graficar(elemento):
     dot_string = 'digraph G {\n'
     dot_string += elemento.to_dot()
     dot_string += "}\n"
-    with open("matriz.dot", "w") as archivo:
+    with open("table.dot", "w") as archivo:
         archivo.write(dot_string)
-    os.system("dot -Tpng matriz.dot -o matriz.png")
-    print("¡Gráfica generada en matriz.png!")
-    
+    os.system("dot -Tpng table.dot -o table.png")
+    print("¡Gráfica generada en table.png!")
     
 
        
@@ -119,7 +118,7 @@ class App:
                 graficar(elemento)
                 messagebox.showinfo("Gráfica generada", "La gráfica se ha generado exitosamente")
                 # Cargando y mostrando la imagen
-                img = PhotoImage(file='matriz.png')
+                img = PhotoImage(file='table.png')
                 self.image_label.config(image=img)
                 self.image_label.image = img  
             else:

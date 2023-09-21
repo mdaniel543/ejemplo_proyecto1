@@ -17,39 +17,28 @@ class Elemento(Nodo):
     def to_dot(self):
         # Nodo principal del elemento
         nodo_id = f'elemento_{self.id}'
-        cadena = f'"{nodo_id}" [label="{self.nombre}", shape=ellipse, color=blue];\n'
-        
-        # Nodos para rows y cols
-        nodo_rows = f"{nodo_id}_rows"
-        nodo_cols = f"{nodo_id}_cols"
-        cadena += f'"{nodo_rows}" [label="Rows: {self.rows}", shape=ellipse, color=lightblue];\n'
-        cadena += f'"{nodo_cols}" [label="Cols: {self.cols}", shape=ellipse, color=lightblue];\n'
-        cadena += f'"{nodo_id}" -> "{nodo_rows}";\n'
-        cadena += f'"{nodo_id}" -> "{nodo_cols}";\n'
+        cadena = f'"{nodo_id}" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">\n'
 
-        # Nodos para los items
-        nodo_items = f"{nodo_id}_items"
-        cadena += f'"{nodo_items}" [label="Items", shape=ellipse, color=green];\n'
-        cadena += f'"{nodo_id}" -> "{nodo_items}";\n'
-
-        # recorriendo los items
+        # Añadiendo encabezados de columnas
+        cadena += '<TR><TD>Titulo</TD>'
         for c in range(1, self.cols + 1):
-            prev_item = nodo_items
-            for r in range(1, self.rows + 1):
+            cadena += f'<TD>{c}</TD>'
+        cadena += '</TR>\n'
+
+        # Añadiendo filas con índices y elementos
+        for r in range(1, self.rows + 1):
+            cadena += f'<TR><TD>{r}</TD>'
+            for c in range(1, self.cols + 1):
                 item = self.get_item(r, c)
-                item_nodo_id = f"{nodo_id}_item_{r}_{c}"
-                cadena += f'"{item_nodo_id}" [label="{item.text if item else "-"}", shape=ellipse];\n'
-                
-                # Conectando el nodo "Items" solo a los items de la primera fila
-                if r == 1:
-                    cadena += f'"{nodo_items}" -> "{item_nodo_id}";\n'
-                
-                # Conectando los demás items
-                else:
-                    cadena += f'"{prev_item}" -> "{item_nodo_id}";\n'
-                    
-                prev_item = item_nodo_id
+                cadena += f'<TD>{item.text if item else "-"}</TD>'
+            cadena += '</TR>\n'
+
+        # Cerrando etiqueta de tabla y nodo
+        cadena += '</TABLE>>, shape=plain];\n'
+
         return cadena
+
+
         
         
     def showItemsConsole(self):
